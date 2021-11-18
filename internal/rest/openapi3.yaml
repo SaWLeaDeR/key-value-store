@@ -1,0 +1,103 @@
+components:
+  requestBodies:
+    GetKeyRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              key:
+                minLength: 1
+                type: string
+      description: Request used for get value using key
+      required: true
+    SaveStoreDataRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              key:
+                minLength: 1
+                type: string
+              value:
+                minLength: 1
+                type: string
+      description: Request used for storing a data
+      required: true
+  responses:
+    CreateStoreDataResponse:
+      content:
+        application/json:
+          schema:
+            properties:
+              data:
+                $ref: '#/components/schemas/Data'
+      description: Response returned back after store data or get data from data store
+    ErrorResponse:
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                type: string
+      description: Response when errors happen.
+  schemas:
+    Data:
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      type: object
+info:
+  contact:
+    url: https://github.com/SaWLeaDeR/key-value-store/
+  description: REST APIs used for interacting with the StoreData Service
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: StoreData API
+  version: 0.0.0
+openapi: 3.0.0
+paths:
+  /flush:
+    get:
+      operationId: Flush
+      responses:
+        "201":
+          $ref: '#/components/responses/CreateStoreDataResponse'
+        "400":
+          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: '#/components/responses/ErrorResponse'
+  /store:
+    post:
+      operationId: SaveData
+      requestBody:
+        $ref: '#/components/requestBodies/SaveStoreDataRequest'
+      responses:
+        "201":
+          $ref: '#/components/responses/CreateStoreDataResponse'
+        "400":
+          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: '#/components/responses/ErrorResponse'
+  /store/{key}:
+    get:
+      operationId: GetValueUsingKey
+      parameters:
+      - in: path
+        name: key
+        required: true
+        schema:
+          format: uuid
+          type: string
+      responses:
+        "201":
+          $ref: '#/components/responses/CreateStoreDataResponse'
+        "400":
+          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: '#/components/responses/ErrorResponse'
+servers:
+- description: Local development
+  url: http://localhost:9234
